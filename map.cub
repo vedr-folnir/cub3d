@@ -1,0 +1,18 @@
+NO ./texture/WOOD.ppm
+SO ./texture/dungeonbricks.ppm
+WE ./texture/HEXAGONS.ppm
+EA ./texture/METALTILE.ppm
+
+F 32,89,29
+C 47, 107,204
+
+F 26,64,24
+
+11111111
+10000001
+10100001
+10100001
+10000001
+10000101
+10000001
+11111111
