@@ -6,7 +6,7 @@
 /*   By: hlasota <hlasota@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 11:27:42 by hlasota           #+#    #+#             */
-/*   Updated: 2023/12/04 11:21:58 by hlasota          ###   ########.fr       */
+/*   Updated: 2024/01/12 12:18:35 by hlasota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "cub3D.h"
@@ -26,6 +26,7 @@ t_ray	while_hori(t_ray ray, t_player *p, t_map *m)
 	ray.mp = ray.my * m->width + ray.mx;
 	if (ray.mp > 0 && ray.mp < m->size && m->map[ray.mp] == '1')
 	{
+		ray.type = m->map[ray.mp];
 		ray.hx = ray.rx;
 		ray.hy = ray.ry;
 		ray.dist_h = sqrt(pow(ray.hy - p->y, 2) + pow(ray.hx - p->x, 2));
@@ -75,6 +76,7 @@ t_ray	while_vert(t_ray ray, t_player *p, t_map *m)
 	ray.mp = ray.my * m->width + ray.mx;
 	if (ray.mp > 0 && ray.mp < m->size && m->map[ray.mp] == '1')
 	{
+		ray.type = m->map[ray.mp];
 		ray.vx = ray.rx;
 		ray.vy = ray.ry;
 		ray.dist_v = sqrt(pow(ray.ry - p->y, 2) + pow(ray.rx - p->x, 2));

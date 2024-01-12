@@ -6,7 +6,7 @@
 /*   By: hlasota <hlasota@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/02 07:57:36 by hlasota           #+#    #+#             */
-/*   Updated: 2023/11/21 10:36:49 by hlasota          ###   ########.fr       */
+/*   Updated: 2024/01/08 15:03:29 by hlasota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <sys/types.h>
@@ -111,7 +111,6 @@ void	extract_line(t_list *stash, char **line)
 				(*line)[j++] = stash->content[i];
 				break ;
 			}
-			//if (stash->content[i++] != ' ' && stash->content[i - 1] != '\t')
 			(*line)[j++] = stash->content[i++];
 		}
 		stash = stash->next;

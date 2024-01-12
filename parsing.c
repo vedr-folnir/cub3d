@@ -6,11 +6,82 @@
 /*   By: hlasota <hlasota@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 07:43:37 by hlasota           #+#    #+#             */
-/*   Updated: 2023/12/01 14:08:25 by hlasota          ###   ########.fr       */
+/*   Updated: 2024/01/12 17:20:31 by hlasota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "cub3D.h"
 
+void floodFill(t_map *m, int x, int y, char old, char new)
+{
+	if (x < 0 || x >= m->height || y < 0 || y >= m->width)
+		return ;
+	if (m->map_t[x][y] != old)
+		return ;
+	if (old == '0')
+		if (y == 0 || y == m->width || x == 0 || x == m->height)
+			if (m->map_t[x][y] == '0')
+				err(2);
+	if (old == ' ')
+		if ((x + 1 < m->height && m->map_t[x + 1][y] == '0')
+			|| (x - 1 > 0 && m->map_t[x - 1][y] == '0')
+			|| (y + 1 < m->width && m->map_t[x][y + 1] == '0')
+			|| (y - 1 > 0 && m->map_t[x][y - 1] == '0'))
+				return ;
+	m->map_t[x][y] = new;
+	floodFill(m, x + 1, y, old, new);
+	floodFill(m, x - 1, y, old, new);
+	floodFill(m, x, y + 1, old, new);
+	floodFill(m, x, y - 1, old, new);
+}
+
+void remove_space(t_map *m)
+{
+	int i;
+
+	i = 0;
+	while (i < m->height)
+	{
+		floodFill(m, i, 0, ' ', '1');
+		floodFill(m, i, m->width, ' ', '1');
+		i++;
+	}
+	i=0;
+	while (i <= m->width)
+	{
+		floodFill(m, 0, i, ' ', '1');
+		floodFill(m, m->height - 1, i, ' ', '1');
+		i++;
+	}
+}
+
+void	verif_space(t_map *m)
+{
+	int		i;
+	int		j;
+	char	dir;
+
+	remove_space(m);
+	i = 0;
+	while (i < m->height)
+	{
+		j = 0;
+		while (j < m->width)
+		{
+			if (m->map_t[i][j] == ' ')
+				err(4);
+			if (m->map_t[i][j] == 'N' || m->map_t[i][j] == 'S'
+				|| m->map_t[i][j] == 'E' || m->map_t[i][j] == 'W')
+			{
+				dir = m->map_t[i][j];
+				m->map_t[i][j] = '0';
+				floodFill(m, i, j, '0', '-');
+				m->map_t[i][j] = dir;
+			}
+			j++;
+		}
+		i++;
+	}
+}
 int	get_fd(const char *path)
 {
 	int		file;
@@ -72,8 +143,9 @@ char	*get_texture(int fd, int letter)
 	letters[11] = ' ';
 	line = get_next_line(fd);
 	while (ft_strlen(line) == 1)
+	{
 		line = get_next_line(fd);
-	//printf("%s\n", line);
+	}
 	if (line[0] != letters[letter] && line[1] != letters[letter + 6])
 		err(3);
 	return (line);
@@ -105,19 +177,36 @@ char	*ft_strjoin(char *s1, char *s2)
 	return (result);
 }
 
-void	parsing(t_map *m, char *path)
+char	*verif_line(char *line)
 {
-	int		fd;
-	char	*line;
-	char	**stack;
-	char	**temp_map;
-	int		i;
+	int	i;
 
-	fd = get_fd(path);
-	m->NO = texture(get_texture(fd, 0));
-	m->SO = texture(get_texture(fd, 1));
-	m->WE = texture(get_texture(fd, 2));
-	m->EA = texture(get_texture(fd, 3));
+	i = 0;
+	while (line[i] == ' ' || line[i] == '	')
+	{
+		line[i++] = '1';
+	}
+	if (line[i] != '1')
+		err(4);
+	while (line[i] == '0' || line[i] == '1' || line[i] == 'N'
+		|| line[i] == 'S' || line[i] == 'E' || line[i] == 'W' || line[i] == ' ')
+	{
+		if (line[i] == ' ')
+			line[i] = 1;
+		i++;
+	}
+	if (line[i] != 0)
+		err(5);
+	//if (line[i - 1] != '1')
+	//	err(6);
+	return (line);
+}
+
+t_map	*rgb_texture( t_map *m, int fd)
+{
+	char	**stack;
+	char	*line;
+
 	line = get_texture(fd, 4);
 	line = &line[2];
 	stack = ft_split(line, ',');
@@ -128,9 +217,81 @@ void	parsing(t_map *m, char *path)
 	stack = ft_split(line, ',');
 	m->C = ft_atoi(stack[0]) * pow(256, 2) + ft_atoi(stack[1])
 		* 256 + ft_atoi(stack[2]);
+	return (m);
+}
+
+t_map	*parse_texture(t_map *m, int fd)
+{
+	char	*line;
+
 	line = get_next_line(fd);
-	temp_map = malloc(1000 * sizeof(char*));
-	temp_map[0] = 0;
+	while (line[0] != 1 && (m->NO == 0 || m->SO == 0
+			|| m->EA == 0 || m->WE == 0))
+	{
+		if (ft_strncmp(line, "SO ", 3) == 0 && m->SO == 0)
+			m->SO = texture(line);
+		else if (ft_strncmp(line, "NO ", 3) == 0 && m->NO == 0)
+			m->NO = texture(line);
+		else if (ft_strncmp(line, "WE ", 3) == 0 && m->WE == 0)
+			m->WE = texture(line);
+		else if (ft_strncmp(line, "EA ", 3) == 0 && m->EA == 0)
+			m->EA = texture(line);
+		else if (ft_strlen(line) == 1)
+		{
+			line = get_next_line(fd);
+			continue ;
+		}
+		else
+			err(3);
+		line = get_next_line(fd);
+	}
+	return (m);
+}
+
+char	*ft_one(char *in, char *out, int n)
+{
+	int		i;
+
+	i = 0;
+	while (in[i])
+	{
+		out[i] = in[i];
+		i++;
+	}
+	while (i < n)
+		out[i++] = '1';
+	out[i++] = 0;
+	return (out);
+}
+
+char	**same_size(t_map *m)
+{
+	char **tab;
+	int i;
+
+	tab =  (char**)malloc(m->height * sizeof(char*));
+	if (!tab)
+		err(10);
+	i = 0;
+	while (i < m->height)
+	{
+		tab[i] =  (char*)malloc((m->width) * sizeof(char));
+		if (!tab[i])
+			err(11);
+		tab[i] = ft_one(m->map_t[i], tab[i], m->width);
+		i++;
+	}
+	return (tab);
+}
+
+t_map	*parsing_map(t_map *m, int fd)
+{
+	int i;
+	char *line;
+
+	line = get_next_line(fd);
+	m->map_t = malloc(1000 * sizeof(char *));
+	m->map_t[0] = 0;
 	while (ft_strlen(line) == 1)
 		line = get_next_line(fd);
 	i = 0;
@@ -138,14 +299,42 @@ void	parsing(t_map *m, char *path)
 	{
 		if (line[ft_strlen(line) - 1] == '\n')
 			line[ft_strlen(line) - 1] = 0;
-		temp_map[i] = line;
+		m->map_t[i] = line;
+		if (ft_strlen(line) > m->width)
+			m->width = ft_strlen(line);
+		m->height++;
 		line = get_next_line(fd);
-		printf("%s\n", temp_map[i]);
-		m->width = 0;
-		//while ()
 		i++;
 	}
-	i = -1;
-	
+	m->map_t = same_size(m);
+	verif_space(m);
+	return (m);
+}
 
+void	parsing(t_map *m, char *path)
+{
+	int		fd;
+	int		i;
+	int		j;
+
+	fd = get_fd(path);
+	m = parse_texture(m, fd);
+	m = rgb_texture(m, fd);
+	m = parsing_map(m, fd);
+	i = 0;
+	while (i < m->height)
+	{
+		m->map = ft_strjoin(m->map, m->map_t[i++]);
+	}
+	i = 0;
+	j = 0;
+	while (m->map[i])
+	{
+		if ((m->map[i] == 'N' || m->map[i] == 'S' || m->map[i] == 'E'
+			|| m->map[i] == 'W'))
+			j++;
+		i++;
+	}
+	if (j != 1)
+		err(12);
 }
