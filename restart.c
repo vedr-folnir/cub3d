@@ -6,7 +6,7 @@
 /*   By: hlasota <hlasota@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 16:20:50 by hlasota           #+#    #+#             */
-/*   Updated: 2024/01/16 11:34:01 by hlasota          ###   ########.fr       */
+/*   Updated: 2024/01/16 16:55:09 by hlasota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "./cub3D.h"
@@ -194,7 +194,11 @@ int	main(int argc, char *argv[])
 	init_win(&vars);
 	init_img(&vars, &img);
 	init_player(&player, &map);
-	a = init_all(&a, &vars, &img, &player, &map);
+	a.flag = 0;
+	a.v = &vars;
+	a.p = &player;
+	a.d = &img;
+	a.m = &map;
 	draw_floor_ceiling(&a);
 	draw_rays(a.p, a.m, a.d);
 	mlx_put_image_to_window(vars.mlx, vars.win, img.img, 0, 0);

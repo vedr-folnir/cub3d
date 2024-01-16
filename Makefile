@@ -26,6 +26,11 @@ SRCS        :=      restart.c \
 					need/ft_atoi.c \
 					need/ft_split.c \
 					need/ft_strncmp.c \
+					door.c \
+					collision.c \
+					textures.c \
+					flood_fill.c \
+					verif_map.c \
 
 OBJS        := $(SRCS:.c=.o)
 
