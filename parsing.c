@@ -6,7 +6,7 @@
 /*   By: hlasota <hlasota@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 07:43:37 by hlasota           #+#    #+#             */
-/*   Updated: 2024/01/16 13:08:18 by hlasota          ###   ########.fr       */
+/*   Updated: 2024/01/16 15:04:53 by hlasota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "cub3D.h"
@@ -134,24 +134,17 @@ char	*get_texture(int fd, int letter)
 	char	*line;
 	char	letters[12];
 
-	letters[0] = 'N';
-	letters[1] = 'S';
-	letters[2] = 'W';
-	letters[3] = 'E';
-	letters[4] = 'F';
-	letters[5] = 'C';
-	letters[6] = 'O';
-	letters[7] = 'O';
-	letters[8] = 'E';
-	letters[9] = 'A';
-	letters[10] = ' ';
-	letters[11] = ' ';
+	letters[0] = 'F';
+	letters[1] = 'C';
+	letters[2] = ' ';
+	letters[3] = ' ';
 	line = get_next_line(fd);
 	while (ft_strlen(line) == 1)
 	{
+		free(line);
 		line = get_next_line(fd);
 	}
-	if (line[0] != letters[letter] && line[1] != letters[letter + 6])
+	if (line[0] != letters[letter] && line[1] != letters[letter + 2])
 		err(3);
 	return (line);
 }
@@ -202,27 +195,29 @@ char	*verif_line(char *line)
 	}
 	if (line[i] != 0)
 		err(5);
-	//if (line[i - 1] != '1')
-	//	err(6);
 	return (line);
 }
 
-t_map	*rgb_texture( t_map *m, int fd)
+int	rgb_texture_need(int val, int fd)
 {
 	char	**stack;
 	char	*line;
+	char	*temp;
+	int		i;
+	int		result;
 
-	line = get_texture(fd, 4);
-	line = &line[2];
+	temp = "";
+	temp = get_texture(fd, val);
+	line = &temp[2];
 	stack = ft_split(line, ',');
-	m->F = ft_atoi(stack[0]) * pow(256, 2) + ft_atoi(stack[1])
+	result = ft_atoi(stack[0]) * pow(256, 2) + ft_atoi(stack[1])
 		* 256 + ft_atoi(stack[2]);
-	line = get_texture(fd, 5);
-	line = &line[2];
-	stack = ft_split(line, ',');
-	m->C = ft_atoi(stack[0]) * pow(256, 2) + ft_atoi(stack[1])
-		* 256 + ft_atoi(stack[2]);
-	return (m);
+	free(temp);
+	i = 0;
+	while (stack[i])
+		free(stack[i++]);
+	free(stack);
+	return (result);
 }
 
 t_map	*parse_texture(t_map *m, int fd)
@@ -241,15 +236,12 @@ t_map	*parse_texture(t_map *m, int fd)
 			m->WE = texture(line);
 		else if (ft_strncmp(line, "EA ", 3) == 0 && m->EA == 0)
 			m->EA = texture(line);
-		else if (ft_strlen(line) == 1)
-		{
-			line = get_next_line(fd);
-			continue ;
-		}
-		else
+		else if (ft_strlen(line) != 1)
 			err(3);
+		free(line);
 		line = get_next_line(fd);
 	}
+	free(line);
 	return (m);
 }
 
@@ -284,6 +276,7 @@ char	**same_size(t_map *m)
 		if (!tab[i])
 			err(11);
 		tab[i] = ft_one(m->map_t[i], tab[i], m->width);
+		free(m->map_t[i]);
 		i++;
 	}
 	free(m->map_t);
@@ -293,38 +286,38 @@ char	**same_size(t_map *m)
 t_map	*parsing_map(t_map *m, int fd)
 {
 	int i;
-	char *line;
+	int	len;
 
-	line = get_next_line(fd);
-	m->map_t[0] = 0;
-	while (ft_strlen(line) == 1)
-		line = get_next_line(fd);
-	i = 0;
-	while (line)
+	m->map_t[0] = get_next_line(fd);
+	while (ft_strlen(m->map_t[0]) == 1)
 	{
-		if (line[ft_strlen(line) - 1] == '\n')
-			line[ft_strlen(line) - 1] = 0;
-		m->map_t[i] = line;
-		if (ft_strlen(line) > m->width)
-			m->width = ft_strlen(line);
+		free(m->map_t[0]);
+		m->map_t[0] = get_next_line(fd);
+	}
+	i = 0;
+	while (m->map_t[i])
+	{
+		len = ft_strlen(m->map_t[i]);
+		if (m->map_t[i][len - 1] == '\n')
+			m->map_t[i][len - 1] = 0;
+		if (len > m->width)
+			m->width = len;
 		m->height++;
-		//free(line);
-		line = get_next_line(fd);
 		i++;
+		m->map_t[i] = get_next_line(fd);
 	}
 	m->map_t = same_size(m);
 	verif_space(m);
 	return (m);
 }
 
-int	ft_strlcat(char *dst, const char *src, int size)
+size_t	ft_strlcat(char *dst, const char *src, size_t size)
 {
-	int	i;
-	int	j;
+	size_t	i;
+	size_t	j;
 
 	i = 0;
 	j = 0;
-	printf("r%d", j);
 	while (dst[j] && j < size)
 		j++;
 	while (src[i] && size && (i + j) < size - 1)
@@ -340,19 +333,17 @@ int	ft_strlcat(char *dst, const char *src, int size)
 	return (i + j);
 }
 
+
 t_map	*signle_char(t_map *m)
 {
 	int		i;
 
 	i = 0;
-	m->map = "\0";
 	while (i < m->height)
 	{
-		//temp = ft_strjoin(m->map, m->map_t[i]);
-		//m->map = temp;//ft_strjoin(m->map, m->map_t[i++]);
-		printf("fr\n");
-		ft_strlcat(m->map, m->map_t[i], ft_strlen(m->map_t[i]));
-		//free(m->map_t[i++]);
+		ft_strlcat(m->map, m->map_t[i], ft_strlen(m->map)
+			+ ft_strlen(m->map_t[i]) + 1);
+		free(m->map_t[i++]);
 	}
 	return (m);
 }
@@ -365,7 +356,8 @@ void	parsing(t_map *m, char *path)
 
 	fd = get_fd(path);
 	m = parse_texture(m, fd);
-	m = rgb_texture(m, fd);
+	m->F = rgb_texture_need(0, fd);
+	m->C = rgb_texture_need(1, fd);
 	m = parsing_map(m, fd);
 	m = signle_char(m);
 	i = 0;

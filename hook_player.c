@@ -6,7 +6,7 @@
 /*   By: hlasota <hlasota@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 11:43:49 by hlasota           #+#    #+#             */
-/*   Updated: 2024/01/16 11:32:53 by hlasota          ###   ########.fr       */
+/*   Updated: 2024/01/16 16:13:06 by hlasota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "cub3D.h"
@@ -164,8 +164,14 @@ int	ft_strcmp(const char *s1, const char *s2)
 	return ((unsigned char)(s1[i]) - (unsigned char)(s2[i]));
 }
 
-char	*open_door(t_player *p, t_map *m, char *str, int xo, int yo)
+char	*open_door(t_player *p, t_map *m, char *str, int xo)
 {
+	int	yo;
+
+	if (p->dy < 0)
+		yo = -64;
+	else
+		yo = 64;
 	if (((int)(p->y / 64) * m->width + (int)((p->x + xo) / 64)) % m->width != 0
 			&& ((int)(p->y / 64) * m->width + (int)((p->x + xo) / 64))
 			% m->width != m->width - 1 && ((int)((p->y + yo) / 64) * m->width
@@ -175,30 +181,17 @@ char	*open_door(t_player *p, t_map *m, char *str, int xo, int yo)
 		if (str[(int)(p->y / 64) * m->width + (int)((p->x + xo) / 64)] == '1'
 			&& (p->a > 3 * M_PI / 2 + M_PI / 4 || p->a < M_PI / 4
 				|| (p->a > M_PI / 2 + M_PI / 4 && p->a < M_PI + M_PI / 4)))
-		{
 			str[(int)(p->y / 64) * m->width + (int)((p->x + xo) / 64)] = '-';
-		}
-		
 		else if(str[(int)((p->y + yo) / 64) * m->width + (int)(p->x / 64)] == '1')
-			str[(int)((p->y + yo) / 64) * m->width + (int)(p->x / 64)] = '-';
+			str[(int)((p->y + yo) / 64)*m->width + (int)(p->x / 64)] = '-';
 	}
 	return (str);
 }
 
-char	*close_door(t_player *p, t_map *m, char *str, int xo, int yo)
+char	*close_door(t_player *p, t_map *m, char *str)
 {
-	if (p->a > 3 * M_PI / 2 + M_PI / 4 || p->a < M_PI / 4
-		|| (p->a > M_PI / 2 + M_PI / 4 && p->a < M_PI + M_PI / 4))
-		str[(int)(p->y / 64) * m->width + (int)((p->x + xo) / 64)] = '1';
-	else if (str[(int)((p->y + yo) / 64) * m->width + (int)(p->x / 64)] != '1')
-		str[(int)((p->y + yo) / 64) * m->width + (int)(p->x / 64)] = '1';
-	return (str);
-}
-char	*door(int keycode, t_player *p, t_map *m)
-{
-	char	*str;
-	int		xo;
-	int		yo;
+	int	xo;
+	int	yo;
 
 	if (p->dx < 0)
 		xo = -64;
@@ -208,6 +201,24 @@ char	*door(int keycode, t_player *p, t_map *m)
 		yo = -64;
 	else
 		yo = 64;
+	if (p->a > 3 * M_PI / 2 + M_PI / 4 || p->a < M_PI / 4
+		|| (p->a > M_PI / 2 + M_PI / 4 && p->a < M_PI + M_PI / 4))
+		str[(int)(p->y / 64) * m->width + (int)((p->x + xo) / 64)] = '1';
+	else if (str[(int)((p->y + yo) / 64)*m->width
+		+ (int)(p->x / 64)] != '1')
+		str[(int)((p->y + yo) / 64)*m->width + (int)(p->x / 64)] = '1';
+	return (str);
+}
+
+char	*door(int keycode, t_player *p, t_map *m)
+{
+	char	*str;
+	int		xo;
+
+	if (p->dx < 0)
+		xo = -64;
+	else
+		xo = 64;
 	str = malloc(ft_strlen(m->map) + 1);
 	if (str == 0)
 	{
@@ -216,47 +227,34 @@ char	*door(int keycode, t_player *p, t_map *m)
 	}
 	ft_strcpy(str, m->map);
 	if (keycode == 'e')
-		str = open_door(p, m, str, xo, yo);
+		str = open_door(p, m, str, xo);
 	if (keycode == 'q')
-		str = close_door(p, m, str, xo, yo);
+		str = close_door(p, m, str);
 	free(m->map);
 	return (str);
 }
 
 void	finish(t_all *a)
 {
-	/*int i;
-
-	i = 0;
-	while (i < a->m->height)
-	{
-		free(a->m->map_t[i]);
-		i++;
-	}*/
 	free(a->m->map_t);
 	free(a->m->map);
 	free(a->m->NO);
 	free(a->m->SO);
 	free(a->m->WE);
 	free(a->m->EA);
-	//mlx_destroy_image(a->v->mlx, a->d->img);
-	//mlx_destroy_window(a->v->mlx, a->v->win);
-	//mlx_destroy_display(a->v->mlx);
+	mlx_destroy_image(a->v->mlx, a->d->img);
+	mlx_destroy_window(a->v->mlx, a->v->win);
+	mlx_destroy_display(a->v->mlx);
 	free(a->v->mlx);
 	exit(0);
 }
 
 void	movement(int keycode, t_all *a)
 {
-	//char *temp_door;
 	if (keycode == 65307)
 		finish(a);
 	a->m->off += offset(keycode, a->m);
 	collision(keycode, a->p, a->m);
 	collision_side(keycode, a->p, a->m);
-	/*temp_door =	door(keycode, a->p, a->m);
-	a->m->map = temp_door;
-	free(temp_door);*/
-
 	a->m->map = door(keycode, a->p, a->m);
 }

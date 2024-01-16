@@ -6,7 +6,7 @@
 /*   By: hlasota <hlasota@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 16:43:19 by hlasota           #+#    #+#             */
-/*   Updated: 2024/01/16 11:43:32 by hlasota          ###   ########.fr       */
+/*   Updated: 2024/01/16 13:45:12 by hlasota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "./cub3D.h"
@@ -57,7 +57,7 @@ void	init_map(t_map *m, char *path)
 	m->WE = 0;
 	m->EA = 0;
 	m->map_t = malloc(sizeof(char *) * 1000);
-	m->map = malloc(sizeof(char *) * 100000);
+	m->map = malloc(sizeof(char *) * 10000);
 	m->width = 0;
 	m->height = 0;
 	parsing(m, path);
