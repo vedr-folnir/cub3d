@@ -6,7 +6,7 @@
 /*   By: hlasota <hlasota@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 11:43:49 by hlasota           #+#    #+#             */
-/*   Updated: 2024/01/12 16:41:00 by hlasota          ###   ########.fr       */
+/*   Updated: 2024/01/16 11:32:53 by hlasota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "cub3D.h"
@@ -113,7 +113,6 @@ void	collision_side(int keycode, t_player *p, t_map *m)
 		yo = 25;
 	if (keycode == 'a')
 	{
-		printf("rg\n");
 		left_side(p, m, yo, xo);
 	}
 	if (keycode == 'd')
@@ -167,7 +166,6 @@ int	ft_strcmp(const char *s1, const char *s2)
 
 char	*open_door(t_player *p, t_map *m, char *str, int xo, int yo)
 {
-	printf("%f\n", p->a);
 	if (((int)(p->y / 64) * m->width + (int)((p->x + xo) / 64)) % m->width != 0
 			&& ((int)(p->y / 64) * m->width + (int)((p->x + xo) / 64))
 			% m->width != m->width - 1 && ((int)((p->y + yo) / 64) * m->width
@@ -178,7 +176,6 @@ char	*open_door(t_player *p, t_map *m, char *str, int xo, int yo)
 			&& (p->a > 3 * M_PI / 2 + M_PI / 4 || p->a < M_PI / 4
 				|| (p->a > M_PI / 2 + M_PI / 4 && p->a < M_PI + M_PI / 4)))
 		{
-			printf("f\n");
 			str[(int)(p->y / 64) * m->width + (int)((p->x + xo) / 64)] = '-';
 		}
 		
@@ -222,19 +219,29 @@ char	*door(int keycode, t_player *p, t_map *m)
 		str = open_door(p, m, str, xo, yo);
 	if (keycode == 'q')
 		str = close_door(p, m, str, xo, yo);
+	free(m->map);
 	return (str);
 }
 
 void	finish(t_all *a)
 {
+	/*int i;
+
+	i = 0;
+	while (i < a->m->height)
+	{
+		free(a->m->map_t[i]);
+		i++;
+	}*/
+	free(a->m->map_t);
 	free(a->m->map);
 	free(a->m->NO);
 	free(a->m->SO);
 	free(a->m->WE);
 	free(a->m->EA);
-	mlx_destroy_image(a->v->mlx, a->d->img);
-	mlx_destroy_window(a->v->mlx, a->v->win);
-	mlx_destroy_display(a->v->mlx);
+	//mlx_destroy_image(a->v->mlx, a->d->img);
+	//mlx_destroy_window(a->v->mlx, a->v->win);
+	//mlx_destroy_display(a->v->mlx);
 	free(a->v->mlx);
 	exit(0);
 }
@@ -242,7 +249,6 @@ void	finish(t_all *a)
 void	movement(int keycode, t_all *a)
 {
 	//char *temp_door;
-
 	if (keycode == 65307)
 		finish(a);
 	a->m->off += offset(keycode, a->m);
@@ -251,5 +257,6 @@ void	movement(int keycode, t_all *a)
 	/*temp_door =	door(keycode, a->p, a->m);
 	a->m->map = temp_door;
 	free(temp_door);*/
+
 	a->m->map = door(keycode, a->p, a->m);
 }

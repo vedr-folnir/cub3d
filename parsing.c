@@ -6,7 +6,7 @@
 /*   By: hlasota <hlasota@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 07:43:37 by hlasota           #+#    #+#             */
-/*   Updated: 2024/01/12 17:20:31 by hlasota          ###   ########.fr       */
+/*   Updated: 2024/01/16 13:08:18 by hlasota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "cub3D.h"
@@ -116,11 +116,16 @@ int	*texture(char *path)
 	line = get_next_line(fd);
 	stack = ft_split(line, ',');
 	i = 0;
+	free(line);
 	while (stack[i])
 	{
 		pixel[i] = atoi(stack[i]);
 		i++;
 	}
+	i = 0;
+	while (stack[i])
+		free(stack[i++]);
+	free(stack);
 	return (pixel);
 }
 
@@ -281,6 +286,7 @@ char	**same_size(t_map *m)
 		tab[i] = ft_one(m->map_t[i], tab[i], m->width);
 		i++;
 	}
+	free(m->map_t);
 	return (tab);
 }
 
@@ -290,7 +296,6 @@ t_map	*parsing_map(t_map *m, int fd)
 	char *line;
 
 	line = get_next_line(fd);
-	m->map_t = malloc(1000 * sizeof(char *));
 	m->map_t[0] = 0;
 	while (ft_strlen(line) == 1)
 		line = get_next_line(fd);
@@ -303,11 +308,52 @@ t_map	*parsing_map(t_map *m, int fd)
 		if (ft_strlen(line) > m->width)
 			m->width = ft_strlen(line);
 		m->height++;
+		//free(line);
 		line = get_next_line(fd);
 		i++;
 	}
 	m->map_t = same_size(m);
 	verif_space(m);
+	return (m);
+}
+
+int	ft_strlcat(char *dst, const char *src, int size)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	printf("r%d", j);
+	while (dst[j] && j < size)
+		j++;
+	while (src[i] && size && (i + j) < size - 1)
+	{
+		dst[i + j] = src[i];
+		i++;
+	}
+	if (j < size)
+		dst[i + j] = '\0';
+	i = 0;
+	while (src[i])
+		i++;
+	return (i + j);
+}
+
+t_map	*signle_char(t_map *m)
+{
+	int		i;
+
+	i = 0;
+	m->map = "\0";
+	while (i < m->height)
+	{
+		//temp = ft_strjoin(m->map, m->map_t[i]);
+		//m->map = temp;//ft_strjoin(m->map, m->map_t[i++]);
+		printf("fr\n");
+		ft_strlcat(m->map, m->map_t[i], ft_strlen(m->map_t[i]));
+		//free(m->map_t[i++]);
+	}
 	return (m);
 }
 
@@ -321,11 +367,7 @@ void	parsing(t_map *m, char *path)
 	m = parse_texture(m, fd);
 	m = rgb_texture(m, fd);
 	m = parsing_map(m, fd);
-	i = 0;
-	while (i < m->height)
-	{
-		m->map = ft_strjoin(m->map, m->map_t[i++]);
-	}
+	m = signle_char(m);
 	i = 0;
 	j = 0;
 	while (m->map[i])

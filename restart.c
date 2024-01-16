@@ -6,7 +6,7 @@
 /*   By: hlasota <hlasota@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 16:20:50 by hlasota           #+#    #+#             */
-/*   Updated: 2024/01/12 17:06:20 by hlasota          ###   ########.fr       */
+/*   Updated: 2024/01/16 11:34:01 by hlasota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "./cub3D.h"
@@ -162,7 +162,6 @@ void	draw_floor_ceiling(t_all *a)
 
 int	hook(int keycode, t_all *a)
 {
-	printf("%f %f\n", a->p->x / 64, a->p->y / 64);
 	init_img(a->v, a->d);
 	angle(keycode, a->p);
 	movement(keycode, a);
@@ -199,6 +198,7 @@ int	main(int argc, char *argv[])
 	draw_floor_ceiling(&a);
 	draw_rays(a.p, a.m, a.d);
 	mlx_put_image_to_window(vars.mlx, vars.win, img.img, 0, 0);
+	mlx_destroy_image(a.v->mlx, a.d->img);
 	mlx_hook(vars.win, 2, 1L << 0, hook, &a);
 	mlx_loop(vars.mlx);
 	return (0);
