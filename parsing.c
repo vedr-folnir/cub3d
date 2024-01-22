@@ -6,7 +6,7 @@
 /*   By: hlasota <hlasota@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 07:43:37 by hlasota           #+#    #+#             */
-/*   Updated: 2024/01/16 17:17:45 by hlasota          ###   ########.fr       */
+/*   Updated: 2024/01/22 10:30:37 by hlasota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "cub3D.h"
@@ -31,7 +31,7 @@ char	*verif_line(char *line)
 		line[i++] = '1';
 	}
 	if (line[i] != '1')
-		err(4);
+		err(5);
 	while (line[i] == '0' || line[i] == '1' || line[i] == 'N' || line[i] == 'S'
 		|| line[i] == 'E' || line[i] == 'W' || line[i] == ' ')
 	{
@@ -52,8 +52,8 @@ void	parsing(t_map *m, char *path)
 
 	fd = get_fd(path);
 	m = parse_texture(m, fd);
-	m->F = rgb_texture_need(0, fd);
-	m->C = rgb_texture_need(1, fd);
+	m->f = rgb_texture_need(0, fd);
+	m->c = rgb_texture_need(1, fd);
 	m = parsing_map(m, fd);
 	m = signle_char(m);
 	i = 0;
@@ -66,5 +66,5 @@ void	parsing(t_map *m, char *path)
 		i++;
 	}
 	if (j != 1)
-		err(12);
+		err(6);
 }

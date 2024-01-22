@@ -6,7 +6,7 @@
 /*   By: hlasota <hlasota@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 17:16:33 by hlasota           #+#    #+#             */
-/*   Updated: 2024/01/16 17:16:56 by hlasota          ###   ########.fr       */
+/*   Updated: 2024/01/22 10:32:00 by hlasota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "cub3D.h"
@@ -34,13 +34,13 @@ char	**same_size(t_map *m)
 
 	tab = (char **)malloc(m->height * sizeof(char *));
 	if (!tab)
-		err(10);
+		err(7);
 	i = 0;
 	while (i < m->height)
 	{
 		tab[i] = (char *)malloc((m->width) * sizeof(char));
 		if (!tab[i])
-			err(11);
+			err(7);
 		tab[i] = ft_one(m->map_t[i], tab[i], m->width);
 		free(m->map_t[i]);
 		i++;

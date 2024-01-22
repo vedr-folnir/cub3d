@@ -6,7 +6,7 @@
 /*   By: hlasota <hlasota@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 16:43:19 by hlasota           #+#    #+#             */
-/*   Updated: 2024/01/16 16:55:57 by hlasota          ###   ########.fr       */
+/*   Updated: 2024/01/22 14:59:25 by hlasota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "./cub3D.h"
@@ -16,6 +16,8 @@ void	init_win(t_vars *vars)
 	vars->mlx = mlx_init();
 	vars->width = 1024;
 	vars->height = 512;
+	vars->sw = 0;
+	vars->sh = 0;
 	vars->win = mlx_new_window(vars->mlx, vars->width, vars->height, "cub3D");
 }
 
@@ -54,10 +56,10 @@ void	init_map(t_map *m, char *path)
 {
 	int	i;
 
-	m->NO = 0;
-	m->SO = 0;
-	m->WE = 0;
-	m->EA = 0;
+	m->no = 0;
+	m->so = 0;
+	m->we = 0;
+	m->ea = 0;
 	m->map_t = malloc(sizeof(char *) * 1000);
 	m->map = malloc(sizeof(char *) * 10000);
 	m->width = 0;

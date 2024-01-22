@@ -6,7 +6,7 @@
 /*   By: hlasota <hlasota@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 11:43:49 by hlasota           #+#    #+#             */
-/*   Updated: 2024/01/16 16:38:28 by hlasota          ###   ########.fr       */
+/*   Updated: 2024/01/22 15:53:43 by hlasota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "cub3D.h"
@@ -29,14 +29,14 @@ void	angle(int keycode, t_player *p)
 	p->dy = sin(p->a) * 5;
 }
 
-void	finish(t_all *a)
+int	finish(t_all *a)
 {
 	free(a->m->map_t);
 	free(a->m->map);
-	free(a->m->NO);
-	free(a->m->SO);
-	free(a->m->WE);
-	free(a->m->EA);
+	free(a->m->no);
+	free(a->m->so);
+	free(a->m->we);
+	free(a->m->ea);
 	mlx_destroy_image(a->v->mlx, a->d->img);
 	mlx_destroy_window(a->v->mlx, a->v->win);
 	mlx_destroy_display(a->v->mlx);

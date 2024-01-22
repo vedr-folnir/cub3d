@@ -6,7 +6,7 @@
 /*   By: hlasota <hlasota@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 17:10:01 by hlasota           #+#    #+#             */
-/*   Updated: 2024/01/16 17:10:34 by hlasota          ###   ########.fr       */
+/*   Updated: 2024/01/22 13:01:21 by hlasota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "./cub3D.h"
@@ -18,7 +18,7 @@ int	get_texture_fd(char *path)
 	path[ft_strlen(path) - 1] = 0;
 	file = open(path + 3, O_RDONLY);
 	if (file == -1)
-		err(2);
+		err(8);
 	return (file);
 }
 
@@ -64,7 +64,7 @@ char	*get_texture(int fd, int letter)
 		line = get_next_line(fd);
 	}
 	if (line[0] != letters[letter] && line[1] != letters[letter + 2])
-		err(3);
+		err(8);
 	return (line);
 }
 
@@ -95,19 +95,19 @@ t_map	*parse_texture(t_map *m, int fd)
 	char	*line;
 
 	line = get_next_line(fd);
-	while (line[0] != 1 && (m->NO == 0 || m->SO == 0 || m->EA == 0
-			|| m->WE == 0))
+	while (line[0] != 1 && (m->no == 0 || m->so == 0 || m->ea == 0
+			|| m->we == 0))
 	{
-		if (ft_strncmp(line, "SO ", 3) == 0 && m->SO == 0)
-			m->SO = texture(line);
-		else if (ft_strncmp(line, "NO ", 3) == 0 && m->NO == 0)
-			m->NO = texture(line);
-		else if (ft_strncmp(line, "WE ", 3) == 0 && m->WE == 0)
-			m->WE = texture(line);
-		else if (ft_strncmp(line, "EA ", 3) == 0 && m->EA == 0)
-			m->EA = texture(line);
+		if (ft_strncmp(line, "SO ", 3) == 0 && m->so == 0)
+			m->so = texture(line);
+		else if (ft_strncmp(line, "NO ", 3) == 0 && m->no == 0)
+			m->no = texture(line);
+		else if (ft_strncmp(line, "WE ", 3) == 0 && m->we == 0)
+			m->we = texture(line);
+		else if (ft_strncmp(line, "EA ", 3) == 0 && m->ea == 0)
+			m->ea = texture(line);
 		else if (ft_strlen(line) != 1)
-			err(3);
+			err(8);
 		free(line);
 		line = get_next_line(fd);
 	}
