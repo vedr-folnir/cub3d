@@ -6,7 +6,7 @@
 #    By: hlasota <hlasota@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/17 13:11:21 by hlasota           #+#    #+#              #
-#    Updated: 2024/01/17 14:23:34 by hlasota          ###   ########.fr        #
+#    Updated: 2024/01/25 14:23:33 by hlasota          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,9 +26,11 @@ SRCS        :=      restart.c \
 					need/ft_atoi.c \
 					need/ft_split.c \
 					need/ft_strncmp.c \
+					need/ft_itoa.c \
 					door.c \
 					collision.c \
 					textures.c \
+					textures_rgb.c \
 					flood_fill.c \
 					verif_map.c \
 					ray_casting.c \

@@ -6,7 +6,7 @@
 /*   By: hlasota <hlasota@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 16:25:33 by hlasota           #+#    #+#             */
-/*   Updated: 2024/01/22 15:50:52 by hlasota          ###   ########.fr       */
+/*   Updated: 2024/01/29 10:30:26 by hlasota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <stdlib.h>
 # include <sys/types.h>
 # include <unistd.h>
+# include <sys/time.h>
 
 typedef struct s_vars
 {
@@ -51,6 +52,8 @@ typedef struct s_data
 	int			bits_per_pixel;
 	int			line_length;
 	int			endian;
+	int			width;
+	int			height;
 }				t_data;
 
 typedef struct s_map
@@ -67,6 +70,7 @@ typedef struct s_map
 	int			*ea;
 	int			f;
 	int			c;
+	int			flag_error;
 }				t_map;
 
 typedef struct s_ray
@@ -76,6 +80,7 @@ typedef struct s_ray
 	int			my;
 	int			mp;
 	int			dof;
+	int			max_dof;
 	int			color;
 	float		rx;
 	float		ry;
@@ -106,6 +111,7 @@ typedef struct s_all
 	t_vars		*v;
 	t_player	*p;
 	t_data		*d;
+	t_data		*hud;
 	t_map		*m;
 }				t_all;
 
@@ -120,12 +126,22 @@ void			parsing(t_map *m, char *path);
 void			draw_map(t_map *m, t_data *d);
 void			my_mlx_pixel_put(t_data *data, int x, int y, int color);
 void			draw_line_player(t_player *p, t_data *d, unsigned int color);
-int				finish(t_all *a);
+void			draw_rays(t_player *p, t_map *m, t_data *d);
+void			mini_map(t_all *a);
+void			draw_hud(t_data *d);
+void			draw_time(t_all *a);
+void			flood_fill(t_map *m, int x, int y, char *arg);
+void			remove_space(t_map *m);
+void			verif_space(t_map *m);
+void			verif_map(t_all *a);
 t_ray			angle_is_zero(t_player *p, t_ray *ray);
 t_ray			while_hori(t_ray ray, t_player *p, t_map *m);
 t_ray			check_hori(t_ray ray, t_player *p, t_map *m);
 t_ray			while_vert(t_ray ray, t_player *p, t_map *m);
 t_ray			check_vert(t_ray ray, t_player *p, t_map *m);
+int				hook(int keycode, t_all *a);
+int				finish(t_all *a);
+int				test(t_all *a);
 int				ft_strlen(char *str);
 int				ft_atoi(const char *str);
 char			**ft_split(const char *str, char c);
@@ -133,20 +149,18 @@ int				ft_strncmp(const char *s1, const char *s2, int n);
 char			*door(int keycode, t_player *p, t_map *m);
 void			collision(int keycode, t_player *p, t_map *m, int xo);
 void			collision_side(int keycode, t_player *p, t_map *m);
-int				get_texture_fd(char *path);
-int				*texture(char *path);
+int				get_texture_fd(char *path, t_map *m);
+int				*texture(char *path, t_map *m, char *line);
 char			*get_texture(int fd, int letter);
-int				rgb_texture_need(int val, int fd);
+int				rgb_texture_need(char *line, t_map *m);
 t_map			*parse_texture(t_map *m, int fd);
-void			flood_fill(t_map *m, int x, int y, char *arg);
-void			remove_space(t_map *m);
-void			verif_space(t_map *m);
 char			*ft_one(char *in, char *out, int n);
+char			*ft_itoa(int n);
 char			**same_size(t_map *m);
 t_map			*parsing_map(t_map *m, int fd);
 size_t			ft_strlcat(char *dst, const char *src, size_t size);
 t_map			*signle_char(t_map *m);
-void			draw_rays(t_player *p, t_map *m, t_data *d);
-void			mini_map(t_all *a);
+long int		actual_time(void);
+t_map			*aff_map(t_map *m);
 
 #endif

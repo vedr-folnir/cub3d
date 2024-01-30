@@ -6,7 +6,7 @@
 /*   By: hlasota <hlasota@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 17:16:33 by hlasota           #+#    #+#             */
-/*   Updated: 2024/01/22 10:32:00 by hlasota          ###   ########.fr       */
+/*   Updated: 2024/01/29 10:05:16 by hlasota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "cub3D.h"
@@ -22,7 +22,7 @@ char	*ft_one(char *in, char *out, int n)
 		i++;
 	}
 	while (i < n)
-		out[i++] = '1';
+		out[i++] = ' ';
 	out[i++] = 0;
 	return (out);
 }
@@ -54,14 +54,15 @@ t_map	*parsing_map(t_map *m, int fd)
 	int	i;
 	int	len;
 
-	m->map_t[0] = get_next_line(fd);
-	while (ft_strlen(m->map_t[0]) == 1)
+	if (m->map_t[0] == 0)
+		m->flag_error = 1;
+	while (m->flag_error == 0 && ft_strlen(m->map_t[0]) == 1)
 	{
 		free(m->map_t[0]);
 		m->map_t[0] = get_next_line(fd);
 	}
 	i = 0;
-	while (m->map_t[i])
+	while (m->flag_error == 0 && m->map_t[i])
 	{
 		len = ft_strlen(m->map_t[i]);
 		if (m->map_t[i][len - 1] == '\n')
@@ -72,8 +73,7 @@ t_map	*parsing_map(t_map *m, int fd)
 		i++;
 		m->map_t[i] = get_next_line(fd);
 	}
-	m->map_t = same_size(m);
-	verif_space(m);
+	m->map_t[i] = 0;
 	return (m);
 }
 

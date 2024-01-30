@@ -6,7 +6,7 @@
 /*   By: hlasota <hlasota@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 11:27:42 by hlasota           #+#    #+#             */
-/*   Updated: 2024/01/12 12:18:35 by hlasota          ###   ########.fr       */
+/*   Updated: 2024/01/26 11:42:06 by hlasota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "cub3D.h"
@@ -30,7 +30,7 @@ t_ray	while_hori(t_ray ray, t_player *p, t_map *m)
 		ray.hx = ray.rx;
 		ray.hy = ray.ry;
 		ray.dist_h = sqrt(pow(ray.hy - p->y, 2) + pow(ray.hx - p->x, 2));
-		ray.dof = m->width;
+		ray.dof = ray.max_dof;
 	}
 	else
 	{
@@ -64,7 +64,7 @@ t_ray	check_hori(t_ray ray, t_player *p, t_map *m)
 	}
 	if (ray.ra == 0 || ray.ra == M_PI)
 		ray = angle_is_zero(p, &ray);
-	while (ray.dof < m->width)
+	while (ray.dof < ray.max_dof)
 		ray = while_hori(ray, p, m);
 	return (ray);
 }
@@ -80,7 +80,7 @@ t_ray	while_vert(t_ray ray, t_player *p, t_map *m)
 		ray.vx = ray.rx;
 		ray.vy = ray.ry;
 		ray.dist_v = sqrt(pow(ray.ry - p->y, 2) + pow(ray.rx - p->x, 2));
-		ray.dof = m->width;
+		ray.dof = ray.max_dof;
 	}
 	else
 	{
@@ -114,7 +114,7 @@ t_ray	check_vert(t_ray ray, t_player *p, t_map *m)
 	}
 	if (ray.ra == 0 || ray.ra == M_PI)
 		ray = angle_is_zero(p, &ray);
-	while (ray.dof < m->width)
+	while (ray.dof < ray.max_dof)
 		ray = while_vert(ray, p, m);
 	return (ray);
 }

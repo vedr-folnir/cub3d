@@ -6,7 +6,7 @@
 /*   By: hlasota <hlasota@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 16:43:19 by hlasota           #+#    #+#             */
-/*   Updated: 2024/01/22 14:59:25 by hlasota          ###   ########.fr       */
+/*   Updated: 2024/01/26 15:03:40 by hlasota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "./cub3D.h"
@@ -27,6 +27,8 @@ void	init_img(t_vars *vars, t_data *img)
 	img->addr = mlx_get_data_addr(img->img, &img->bits_per_pixel,
 			&img->line_length,
 			&img->endian);
+	img->width = 0;
+	img->height = 0;
 }
 
 void	init_player(t_player *p, t_map *m)
@@ -60,6 +62,9 @@ void	init_map(t_map *m, char *path)
 	m->so = 0;
 	m->we = 0;
 	m->ea = 0;
+	m->f = -1;
+	m->c = -1;
+	m->flag_error = 0;
 	m->map_t = malloc(sizeof(char *) * 1000);
 	m->map = malloc(sizeof(char *) * 10000);
 	m->width = 0;

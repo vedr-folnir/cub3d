@@ -6,7 +6,7 @@
 /*   By: hlasota <hlasota@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 11:57:52 by hlasota           #+#    #+#             */
-/*   Updated: 2024/01/22 13:15:07 by hlasota          ###   ########.fr       */
+/*   Updated: 2024/01/26 15:24:50 by hlasota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "cub3D.h"
@@ -37,6 +37,68 @@ void	mini_map(t_all *a)
 	a->m->map[y * a->m->width + x] = '.';
 }
 
+int	test(t_all *a)
+{
+	hook(65307, a);
+	return (1);
+}
+
+long int	actual_time(void)
+{
+	long int			time;
+	struct timeval		current_time;
+
+	gettimeofday(&current_time, NULL);
+	time = (current_time.tv_sec);
+	return (time);
+}
+
+void	draw_hud(t_data *d)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i++ < 256)
+	{
+		j = 74;
+		while (j > 10)
+			my_mlx_pixel_put(d, 512 - 128 + i, 512 - j--, 0);
+	}
+	i = 15;
+	while (i++ < 216)
+	{
+		j = 64;
+		while (j > 50)
+			my_mlx_pixel_put(d, 512 - 128 + i, 512 - j--, 0xff000f);
+	}
+	i = 15;
+	while (i++ < 230)
+	{
+		j = 35;
+		while (j > 20)
+			my_mlx_pixel_put(d, 512 - 128 + i, 512 - j--, 0x00f0ff);
+	}
+}
+
+void	draw_time(t_all *a)
+{
+	long int	time;
+	char		*hour;
+	char		*min;
+	char		*sec;
+
+	time = actual_time();
+	hour = ft_itoa(((time / 3600) + 1) % 24);
+	min = ft_itoa((time / 60) % 60);
+	sec = ft_itoa(time % 60);
+	mlx_string_put(a->v->mlx, a->v->win, 900, 50, 0xff000f, hour);
+	mlx_string_put(a->v->mlx, a->v->win, 925, 50, 0xff000f, min);
+	mlx_string_put(a->v->mlx, a->v->win, 950, 50, 0xff000f, sec);
+	free(hour);
+	free(min);
+	free(sec);
+}
 /*
 void	draw_line_player(t_player *p, t_data *d, unsigned int color)
 {

@@ -6,13 +6,16 @@
 /*   By: hlasota <hlasota@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 14:21:08 by hlasota           #+#    #+#             */
-/*   Updated: 2024/01/17 15:36:07 by hlasota          ###   ########.fr       */
+/*   Updated: 2024/01/30 13:09:40 by hlasota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "./cub3D.h"
 
 t_ray	draw_rays_calc(t_ray ray, t_player *p, t_map *m)
 {
+	ray.max_dof = m->height;
+	if (m->width > m->height)
+		ray.max_dof = m->width;
 	ray = check_hori(ray, p, m);
 	ray = check_vert(ray, p, m);
 	ray.shade = 1;
